@@ -2,6 +2,8 @@ package android.example.newzer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -20,18 +27,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView detailTextView;
 
     private String LOG_TAG = MainActivity.class.getSimpleName();
     private String GUARDIAN_API = "https://content.guardianapis.com/";
     private String contentString = "No content";
     private List<Result> newsArraylist = null;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        detailTextView = findViewById(R.id.details);
+        recyclerView = findViewById(R.id.recyclerView_news);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         loadNewsFromJson();
     }
 
@@ -61,15 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "newsArrayList is null ", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                contentString = "";
-                for (Result result : newsArraylist) {
-                    contentString += "sectionName:- " + result.getSectionName() + "\n";
-                    contentString += "webPublicationDate:- " + result.getWebPublicationDate() + "\n";
-                    contentString += "webTitle:- " + result.getWebTitle() + "\n\n\n";
-                }
-                Log.d(LOG_TAG, "the newsList content " + contentString);
-                detailTextView.setText(contentString);
-                Toast.makeText(MainActivity.this, "reached here", Toast.LENGTH_SHORT).show();
+                recyclerView.setAdapter(new NewsAdapter(MainActivity.this, newsArraylist));
             }
 
             @Override
