@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,18 +34,21 @@ public class MainActivity extends AppCompatActivity {
     private String GUARDIAN_API = "https://content.guardianapis.com/";
     private String contentString = "No content";
     private List<Result> newsArraylist = null;
+    private ProgressBar progressBar;
     RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        progressBar=findViewById(R.id.progress);
         recyclerView = findViewById(R.id.recyclerView_news);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         loadNewsFromJson();
     }
 
     private void loadNewsFromJson() {
+        progressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GUARDIAN_API)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -61,14 +66,13 @@ public class MainActivity extends AppCompatActivity {
                 if (newsList == null) {
                     Log.d(LOG_TAG, "the newsList is empty");
                     return;
-                } else {
-                    Toast.makeText(MainActivity.this, "newsList is not empty ", Toast.LENGTH_SHORT).show();
                 }
                 newsArraylist = newsList.getResponse().getResults();
                 if (newsArraylist == null) {
                     Toast.makeText(MainActivity.this, "newsArrayList is null ", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                progressBar.setVisibility(View.INVISIBLE);
                 recyclerView.setAdapter(new NewsAdapter(MainActivity.this, newsArraylist));
             }
 
