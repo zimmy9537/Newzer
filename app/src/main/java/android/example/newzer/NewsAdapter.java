@@ -1,9 +1,12 @@
 package android.example.newzer;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,7 +52,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             String timeToDisplay = timeFormat.format(date);
             holder.timeDetails.setText(timeToDisplay);
         }
+        String webIntent=result.getWebUrl();
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(webIntent));
+                context.startActivity(intent);
+            }
+        });
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -61,6 +74,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         TextView newsTitle;
         TextView dateDetails;
         TextView timeDetails;
+        LinearLayout linearLayout;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +82,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             newsTitle = itemView.findViewById(R.id.news_title);
             dateDetails = itemView.findViewById(R.id.date);
             timeDetails = itemView.findViewById(R.id.time);
+            linearLayout=itemView.findViewById(R.id.news_item_ll);
         }
     }
 }
